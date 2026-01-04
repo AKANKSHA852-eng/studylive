@@ -25,13 +25,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Updated CORS configuration
-app.use(cors({
-     origin: [ "*"],
+app.use(
+  cors({
+    origin: "http://localhost:3000",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
+  })
+);
 
 app.use(
   fileUpload({
