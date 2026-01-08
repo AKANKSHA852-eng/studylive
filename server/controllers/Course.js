@@ -66,7 +66,7 @@ exports.createCourse = async (req, res) => {
       !price ||
       !tag.length ||
       !category ||
-      !instruction.length
+      !instructions.length
     ) {
       return res.status(400).json({
         success: false,
@@ -128,7 +128,7 @@ exports.createCourse = async (req, res) => {
       category: categoryDetails._id,
       thumbnail: thumbnailImage.secure_url,
       status,
-       instructions: instruction,
+       instructions,
     });
 
 
