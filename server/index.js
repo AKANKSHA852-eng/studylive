@@ -27,7 +27,7 @@ app.use(cookieParser());
 // Updated CORS configuration
 app.use(
   cors({
-    origin: ["http://localhost:3000","https://studylive-tau.vercel.app"],
+    origin: ["http://localhost:3000","https://studylive-431q.vercel.app"],
     credentials: true,
   })
 );
