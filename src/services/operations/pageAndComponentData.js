@@ -1,9 +1,9 @@
-import toast from 'react-hot-toast'
-import { apiConnector } from '../apiconnector'
-import { catalogData } from '../api'
+import { toast } from "react-hot-toast"
+import { apiConnector } from "../apiconnector"
+import { catalogData } from "../api"
 
-async function getCatalogaPageData(categoryId) {
-  const toastId = toast.loading("Loading.....")
+export const getCatalogaPageData = async (categoryId) => {
+  const toastId = toast.loading("Loading...")
   let result = null
 
   try {
@@ -17,16 +17,15 @@ async function getCatalogaPageData(categoryId) {
       throw new Error("Could not Fetch Category page data")
     }
 
-    // 🔥 MAIN FIX
+    // ✅ ONLY DATA RETURN
     result = response.data.data
   } catch (error) {
-    console.log("CATALOG page DATA API ERROR:", error)
+    console.log("CATALOG PAGE DATA API ERROR:", error)
+    toast.error(error.message)
     result = null
   }
 
   toast.dismiss(toastId)
   return result
 }
-
-export default getCatalogaPageData
 
