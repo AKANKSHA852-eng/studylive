@@ -78,7 +78,6 @@ exports.categoryPageDetails = async (req, res) => {
       });
     }
 
-    // ✅ Category details (sirf info ke liye)
     const selectedCategory = await Category.findById(categoryId).lean();
 
     if (!selectedCategory) {
@@ -88,32 +87,27 @@ exports.categoryPageDetails = async (req, res) => {
       });
     }
 
-    // ✅ MAIN FIX: categoryId ke basis pe PUBLISHED courses lao
-    const publishedCourses = await Course.find({
+    const selectedCategoryCourses = await Course.find({
       category: categoryId,
       status: "Published",
     })
-      .populate({
-        path: "instructor",
-        populate: { path: "additionalDetails" },
-      })
+      .populate("instructor")
       .populate("ratingAndReviews")
       .lean();
 
-    // ✅ Other categories ke courses
-    const differentCourses = await Course.find({
-      category: { $ne: categoryId },
+    const differentCategory = await Category.findOne({
+      _id: { $ne: categoryId },
+    }).lean();
+
+    const differentCategoryCourses = await Course.find({
+      category: differentCategory?._id,
       status: "Published",
     })
-      .populate({
-        path: "instructor",
-        populate: { path: "additionalDetails" },
-      })
+      .populate("instructor")
       .populate("ratingAndReviews")
       .lean();
 
-    // ✅ Most selling courses (safe logic)
-    const mostSellingCourses = [...publishedCourses, ...differentCourses]
+    const mostSellingCourses = [...selectedCategoryCourses, ...differentCategoryCourses]
       .sort(
         (a, b) =>
           (b.studentsEnrolled?.length || 0) -
@@ -124,20 +118,25 @@ exports.categoryPageDetails = async (req, res) => {
     return res.status(200).json({
       success: true,
       data: {
-        selectedCategory,
-        courses: publishedCourses,   // ⭐ FRONTEND YAHI USE KAREGA
-        differentCourses,
+        selectedCategory: {
+          ...selectedCategory,
+          courses: selectedCategoryCourses,
+        },
+        differentCategory: {
+          ...differentCategory,
+          courses: differentCategoryCourses,
+        },
         mostSellingCourses,
       },
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
-      error: error.message,
+      message: error.message,
     });
   }
 };
+
 
 
 // exports.categoryPageDetails = async (req, res) => {
@@ -196,4 +195,3 @@ exports.categoryPageDetails = async (req, res) => {
 // 		});
 // 	}
 // };
-
